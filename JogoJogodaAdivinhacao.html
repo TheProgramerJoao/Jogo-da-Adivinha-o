@@ -1,0 +1,186 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Jogo de Adivinhação</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+            background-color: #f0f0f0;
+        }
+        
+        h1 {
+            color: #333;
+        }
+        
+        button {
+            font-size: 20px;
+            padding: 15px 25px;
+            margin: 10px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+        
+        input {
+            font-size: 18px;
+            padding: 10px;
+            margin: 10px;
+            border: 2px solid #ddd;
+            border-radius: 5px;
+            width: 100px;
+            text-align: center;
+        }
+        
+        #resultado {
+            margin: 30px 0;
+            padding: 20px;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        #tentativas {
+            font-size: 18px;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>🎯 Jogo de Adivinhação</h1>
+    
+    <p>Adivinhe o número entre 1 e 100!</p>
+    
+    <input type="number" id="palpite" min="1" max="100" placeholder="Número">
+    <button onclick="tentarAdivinhar()">🎲 Tentar</button>
+    
+    <div id="resultado">
+        <p>Digite um número e clique em "Tentar"!</p>
+    </div>
+    
+    <div id="tentativas">
+        Tentativas restantes: <span id="tentativasRestantes">7</span>
+    </div>
+    
+    <button onclick="novoJogo()" style="background-color: #2196F3;">🔄 Novo Jogo</button>
+    <button onclick="sair()" style="background-color: #555;">❌ Sair</button>
+
+    <script>
+
+        let numeroSecreto = 0;
+        let tentativasRestantes = 7;
+        let jogoAtivo = true;
+
+
+        function gerarNumeroSecreto() {
+            return Math.floor(Math.random() * 100) + 1;
+        }
+
+        function validarPalpite(palpite) {
+            const numero = parseInt(palpite);
+            
+            if (isNaN(numero)) {
+                return { valido: false, mensagem: 'Digite apenas números!' };
+            }
+            
+            if (numero < 1 || numero > 100) {
+                return { valido: false, mensagem: 'Número deve estar entre 1 e 100!' };
+            }
+            
+            return { valido: true, numero: numero };
+        }
+
+
+        function atualizarTentativas() {
+            document.getElementById('tentativasRestantes').textContent = tentativasRestantes;
+        }
+
+        function mostrarResultado(mensagem) {
+            document.getElementById('resultado').innerHTML = mensagem;
+        }
+
+      
+        function tentarAdivinhar() {
+            if (!jogoAtivo) {
+                return;
+            }
+
+            const palpiteInput = document.getElementById('palpite');
+            const validacao = validarPalpite(palpiteInput.value);
+            
+            if (!validacao.valido) {
+                mostrarResultado(validacao.mensagem);
+                return;
+            }
+
+            const palpite = validacao.numero;
+            tentativasRestantes--;
+            
+            if (palpite === numeroSecreto) {
+                mostrarResultado(`🎉 Parabéns! Você acertou o número ${numeroSecreto}!`);
+                jogoAtivo = false;
+            } else if (tentativasRestantes === 0) {
+                mostrarResultado(`😔 Suas tentativas acabaram! O número era ${numeroSecreto}.`);
+                jogoAtivo = false;
+            } else {
+                let dica = '';
+                if (palpite < numeroSecreto) {
+                    dica = '📈 O número secreto é MAIOR!';
+                } else {
+                    dica = '📉 O número secreto é MENOR!';
+                }
+                
+                mostrarResultado(dica + `<br>Tentativas restantes: ${tentativasRestantes}`);
+            }
+            
+            atualizarTentativas();
+            palpiteInput.value = '';
+        }
+
+     
+        function novoJogo() {
+            const confirma = confirm('Quer começar um novo jogo?');
+            
+            if (confirma) {
+                numeroSecreto = gerarNumeroSecreto();
+                tentativasRestantes = 7;
+                jogoAtivo = true;
+                atualizarTentativas();
+                mostrarResultado('Novo jogo iniciado! Digite um número e clique em "Tentar"!');
+                document.getElementById('palpite').value = '';
+            }
+        }
+
+        function sair() {
+            const confirma = confirm('Quer mesmo sair do jogo?');
+            
+            if (confirma) {
+                alert('Obrigado por jogar!');
+                mostrarResultado('Jogo encerrado. Recarregue a página para jogar novamente.');
+                jogoAtivo = false;
+            }
+        }
+
+      
+        document.getElementById('palpite').addEventListener('keypress', function(e) {
+            if (e.key === 'Enter') {
+                tentarAdivinhar();
+            }
+        });
+
+        
+        numeroSecreto = gerarNumeroSecreto();
+        console.log('Número secreto:', numeroSecreto); 
+    </script>
+</body>
+</html>
