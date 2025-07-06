@@ -1,0 +1,166 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Pedra, Papel e Tesoura</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            text-align: center;
+            margin: 50px;
+            background-color: #f0f0f0;
+        }
+        
+        h1 {
+            color: #333;
+        }
+        
+        button {
+            font-size: 20px;
+            padding: 15px 25px;
+            margin: 10px;
+            cursor: pointer;
+            background-color: #4CAF50;
+            color: white;
+            border: none;
+            border-radius: 5px;
+        }
+        
+        button:hover {
+            background-color: #45a049;
+        }
+        
+        #resultado {
+            margin: 30px 0;
+            padding: 20px;
+            background-color: white;
+            border-radius: 5px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+        }
+        
+        #placar {
+            font-size: 18px;
+            margin: 20px 0;
+            font-weight: bold;
+        }
+    </style>
+</head>
+<body>
+    <h1>Pedra, Papel e Tesoura</h1>
+    
+    <p>Escolha sua jogada:</p>
+    
+    <button onclick="jogar('pedra')">🪨 Pedra</button>
+    <button onclick="jogar('papel')">📄 Papel</button>
+    <button onclick="jogar('tesoura')">✂️ Tesoura</button>
+    
+    <div id="resultado">
+        <p>Clique em uma opção para começar!</p>
+    </div>
+    
+    <div id="placar">
+        Você: <span id="pontosJogador">0</span> | 
+        Computador: <span id="pontosComputador">0</span>
+    </div>
+    
+    <button onclick="reiniciar()" style="background-color: #f44336;">🔄 Reiniciar</button>
+    <button onclick="sair()" style="background-color: #555;">❌ Sair</button>
+
+    <script>
+
+        const opcoes = ['pedra', 'papel', 'tesoura'];
+        
+     
+        let pontosJogador = 0;
+        let pontosComputador = 0;
+
+      
+        function gerarJogadaComputador() {
+            const indice = Math.floor(Math.random() * opcoes.length);
+            return opcoes[indice];
+        }
+
+       
+        function verificarGanhador(jogador, computador) {
+            if (jogador === computador) {
+                return 'empate';
+            }
+            
+            if (jogador === 'pedra' && computador === 'tesoura') {
+                return 'jogador';
+            }
+            if (jogador === 'papel' && computador === 'pedra') {
+                return 'jogador';
+            }
+            if (jogador === 'tesoura' && computador === 'papel') {
+                return 'jogador';
+            }
+            
+            return 'computador';
+        }
+
+   
+        function atualizarPlacar() {
+            document.getElementById('pontosJogador').textContent = pontosJogador;
+            document.getElementById('pontosComputador').textContent = pontosComputador;
+        }
+
+
+        function mostrarResultado(jogador, computador, ganhador) {
+            const divResultado = document.getElementById('resultado');
+            
+            let mensagem = `Você escolheu: ${jogador}<br>`;
+            mensagem += `Computador escolheu: ${computador}<br><br>`;
+            
+            if (ganhador === 'empate') {
+                mensagem += '🤝 Empate!';
+            } else if (ganhador === 'jogador') {
+                mensagem += '🎉 Você ganhou!';
+                pontosJogador++;
+            } else {
+                mensagem += '😔 Computador ganhou!';
+                pontosComputador++;
+            }
+            
+            divResultado.innerHTML = mensagem;
+            atualizarPlacar();
+        }
+
+  
+        function jogar(escolhaJogador) {
+          
+            const escolhaComputador = gerarJogadaComputador();
+            
+   
+            const resultado = verificarGanhador(escolhaJogador, escolhaComputador);
+            
+
+            mostrarResultado(escolhaJogador, escolhaComputador, resultado);
+        }
+
+     
+        function reiniciar() {
+            const confirma = confirm('Quer mesmo reiniciar o jogo?');
+            
+            if (confirma) {
+                pontosJogador = 0;
+                pontosComputador = 0;
+                atualizarPlacar();
+                document.getElementById('resultado').innerHTML = '<p>Jogo reiniciado! Escolha sua jogada.</p>';
+            }
+        }
+
+     
+        function sair() {
+            const confirma = confirm('Quer mesmo sair do jogo?');
+            
+            if (confirma) {
+                alert('Obrigado por jogar!');
+               
+                document.getElementById('resultado').innerHTML = '<p>Jogo encerrado. Recarregue a página para jogar novamente.</p>';
+            }
+        }
+    </script>
+</body>
+</html>
